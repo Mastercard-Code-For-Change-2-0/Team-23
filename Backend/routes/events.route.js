@@ -63,7 +63,7 @@ router.post('/create', verifyJWT, async (req, res) => {
 });
 
 // Apply for an event (authenticated users)
-router.post('/apply', verifyJWT, async (req, res) => {
+router.post('/apply',async (req, res) => {
   try {
     const { eventId } = req.body;
     const userId = req.user._id;
@@ -112,7 +112,7 @@ router.post('/apply', verifyJWT, async (req, res) => {
 });
 
 // Get user's applied events
-router.get('/applied', verifyJWT, async (req, res) => {
+router.get('/applied', async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -136,7 +136,7 @@ router.get('/applied', verifyJWT, async (req, res) => {
 });
 
 // Get event registrations (admin only)
-router.get('/:eventId/registrations', verifyJWT, async (req, res) => {
+router.get('/:eventId/registrations', async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -191,7 +191,7 @@ router.get('/:eventId', async (req, res) => {
 });
 
 // Update event (admin only)
-router.put('/:eventId', verifyJWT, async (req, res) => {
+router.put('/:eventId',  async (req, res) => {
   try {
     const { eventId } = req.params;
     const updateData = req.body;
