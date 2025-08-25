@@ -10,9 +10,7 @@ dotenv.config();
 const app = express();
 
 import connectDB from './db/index.js';
-
-//Mongo connection
-connectDB();
+import AdminEventRoutes from "./routes/AdminEvents.route.js";
 
 //middlewares
 app.use(cors({
@@ -34,6 +32,7 @@ import authRouter from './routes/auth.route.js';
 
 
 app.use('/api/v1/auth', authRouter);
+app.use("/api/Adminevents", AdminEventRoutes);
 
 
 //error handling route
@@ -42,7 +41,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Internal Server error');
 });
 
-//server start
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+connectDB().then(() => {
+  app.listen(5000, () => {
+    console.log("Server started on PORT:", 5000);
+  });
 });
