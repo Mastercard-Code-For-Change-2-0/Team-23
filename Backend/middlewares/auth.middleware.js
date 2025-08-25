@@ -1,5 +1,6 @@
 import { validateToken } from '../services/auth.service.js';
 import User from '../models/user.model.js';
+import Admin from '../models/admin.model.js';
 
 
 //verify JWT middleware
@@ -21,7 +22,16 @@ const verifyJWT = async (req,res,next) =>{
 
         console.log("Payload in middleware:", payload);
 
-    const user = await User.findById(payload.userId).select("-password");
+        // Check if user is admin or regular user
+        let user = await Admin.findById(payload.userId).select("-password");
+        if (!user) {
+            user = await User.findById(payload.userId).select("-password");
+            if (user) {
+                user.role = 'user'; // Add role property
+            }
+        } else {
+            user.role = 'admin'; // Add role property
+        }
 
         if(!user){
             return res.status(401).json({

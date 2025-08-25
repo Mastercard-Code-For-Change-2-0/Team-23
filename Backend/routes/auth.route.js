@@ -13,6 +13,17 @@ const router = express.Router();
 router.post('/signup', userSignup);
 router.post('/login', userLogin);
 router.post('/logout', verifyJWT, userLogout);
+router.get('/me', verifyJWT, (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: {
+      _id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      role: req.user.role || 'user'
+    }
+  });
+});
 
 //sign in with google
 router.get("/google",passport.authenticate("google",{scope : ["profile","email"]}));
