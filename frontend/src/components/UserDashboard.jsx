@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-
+import { Link } from "react-router-dom";
 const EventCard = ({ event, onApply, appliedEvents }) => {
   const isApplied = appliedEvents.includes(event._id);
 
@@ -10,7 +10,7 @@ const EventCard = ({ event, onApply, appliedEvents }) => {
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800">{event.Title}</h3>
-          <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">
+          <span className="px-3 py-1 bg-pink-100 text-black text-sm font-medium">
             Event #{event.EventID}
           </span>
         </div>
@@ -131,13 +131,12 @@ const UserDashboard = () => {
               <h1 className="text-2xl font-bold text-pink-600">Katalyst Events</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {user?.username}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition-colors"
-              >
-                Logout
-              </button>
+                    <Link
+            to="/login?type=admin"
+            className="w-full sm:w-auto bg-purple-600 text-white px-8 py-4   roundedfont-semibold text-lg  transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          >
+            Admin Login
+          </Link>
             </div>
           </div>
         </div>
@@ -145,9 +144,9 @@ const UserDashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Available Events</h2>
-          <p className="text-gray-600">Discover and apply for events that interest you</p>
+        <div className="mb-8 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Discover events that interest you</h2>
+          <p className="text-gray-600">Empower yourself to break barriers</p>
         </div>
 
         {error && (

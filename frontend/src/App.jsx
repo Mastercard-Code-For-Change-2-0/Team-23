@@ -55,7 +55,7 @@ function App() {
               path="/" 
               element={
                 <PublicRoute>
-                  <LandingPage />
+                  <UserDashboard />
                 </PublicRoute>
               } 
             />
