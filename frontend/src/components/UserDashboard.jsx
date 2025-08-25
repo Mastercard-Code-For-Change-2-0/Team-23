@@ -12,7 +12,8 @@ const RegistrationModal = ({ isOpen, onClose, event, onSubmit, loading }) => {
     college: '',
     yearOfStudy: '',
     fieldOfStudy: '',
-    otherFieldOfStudy: ''
+    otherFieldOfStudy: '',
+    status:''
   });
   const [errors, setErrors] = useState({});
 
@@ -232,7 +233,31 @@ const RegistrationModal = ({ isOpen, onClose, event, onSubmit, loading }) => {
                 )}
               </div>
             )}
-
+<div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                name="yearOfStudy"
+                value={formData.status}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 ${
+                  errors.yearOfStudy ? 'border-red-500' : 'border-gray-300'
+                }`}
+                disabled={loading}
+              >
+                <option value="">Select status</option>
+                <option value="interested">Interested</option>
+                <option value="applied">Apply</option>
+                {/* <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="Graduate">Graduate</option>
+                <option value="Post Graduate">Post Graduate</option> */}
+              </select>
+              {errors.yearOfStudy && (
+                <p className="text-red-500 text-xs mt-1">{errors.yearOfStudy}</p>
+              )}
+            </div>
             <div className="flex space-x-3 pt-4">
               <button
                 type="button"

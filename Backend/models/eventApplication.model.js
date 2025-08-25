@@ -51,7 +51,7 @@ const eventApplicationSchema = new mongoose.Schema({
   },
   status: { 
     type: String, 
-    enum: ['applied', 'accepted', 'rejected'], 
+    enum: ['applied', 'accepted', 'rejected','interested'], 
     default: 'applied' 
   }
 });
