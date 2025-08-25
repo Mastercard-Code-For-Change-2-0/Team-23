@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Admin from "../models/admin.model.js";
 dotenv.config();
 const secret = process.env.JWT_SECRET;
 
@@ -8,7 +9,8 @@ const secret = process.env.JWT_SECRET;
 const createToken  = function(user){
     const payload = {
         userId : user._id,
-        username: user.username
+        username: user.username,
+        role: user.role || 'user' // Add role to token
     }
     const token = jwt.sign(payload,secret);
 
@@ -28,8 +30,16 @@ const validateToken = function(token) {
 const authenticateUser = async (email, password) => {
 
   try{
-    //find user
-    const foundUser = await User.findOne({ email: email })
+    // Check if it's an admin first
+    let foundUser = await Admin.findOne({ email: email });
+    let isAdmin = false;
+    
+    if (foundUser) {
+      isAdmin = true;
+    } else {
+      // If not admin, check regular users
+      foundUser = await User.findOne({ email: email });
+    }
 
     if(!foundUser){
       return { success : false, message: "User not found" }
@@ -50,6 +60,7 @@ const authenticateUser = async (email, password) => {
         _id: foundUser._id,
         username: foundUser.username,
         email: foundUser.email,
+        role: isAdmin ? 'admin' : 'user'
       }
     };
 

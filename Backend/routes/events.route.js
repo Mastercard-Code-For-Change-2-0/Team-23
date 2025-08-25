@@ -1,0 +1,257 @@
+import express from 'express';
+import Event from '../models/events.model.js';
+import EventApplication from '../models/eventApplication.model.js';
+import verifyJWT from '../middlewares/auth.middleware.js';
+
+const router = express.Router();
+
+// Get all events (public route)
+router.get('/', async (req, res) => {
+  try {
+    const events = await Event.find().sort({ CreatedAt: -1 });
+    res.status(200).json({
+      success: true,
+      events
+    });
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch events'
+    });
+  }
+});
+
+// Create new event (admin only)
+router.post('/create', verifyJWT, async (req, res) => {
+  try {
+    const { EventID, Title, Description, StartDate, EndDate, Location, AdminID } = req.body;
+
+    // Check if EventID already exists
+    const existingEvent = await Event.findOne({ EventID });
+    if (existingEvent) {
+      return res.status(400).json({
+        success: false,
+        error: 'Event ID already exists'
+      });
+    }
+
+    const newEvent = new Event({
+      EventID,
+      AdminID: AdminID || 1, // Default admin ID
+      Title,
+      Description,
+      StartDate,
+      EndDate,
+      Location
+    });
+
+    await newEvent.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Event created successfully',
+      event: newEvent
+    });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create event'
+    });
+  }
+});
+
+// Apply for an event (authenticated users)
+router.post('/apply', verifyJWT, async (req, res) => {
+  try {
+    const { eventId } = req.body;
+    const userId = req.user._id;
+
+    // Check if event exists
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        error: 'Event not found'
+      });
+    }
+
+    // Check if user has already applied
+    const existingApplication = await EventApplication.findOne({
+      userId,
+      eventId
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({
+        success: false,
+        error: 'You have already applied for this event'
+      });
+    }
+
+    // Create new application
+    const application = new EventApplication({
+      userId,
+      eventId
+    });
+
+    await application.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Successfully applied for the event'
+    });
+  } catch (error) {
+    console.error('Error applying for event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to apply for event'
+    });
+  }
+});
+
+// Get user's applied events
+router.get('/applied', verifyJWT, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const applications = await EventApplication.find({ userId })
+      .populate('eventId')
+      .sort({ appliedAt: -1 });
+
+    const appliedEvents = applications.map(app => app.eventId._id.toString());
+
+    res.status(200).json({
+      success: true,
+      appliedEvents
+    });
+  } catch (error) {
+    console.error('Error fetching applied events:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch applied events'
+    });
+  }
+});
+
+// Get event registrations (admin only)
+router.get('/:eventId/registrations', verifyJWT, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const registrations = await EventApplication.find({ eventId })
+      .populate('userId', 'username email')
+      .sort({ appliedAt: -1 });
+
+    const registrationData = registrations.map(reg => ({
+      username: reg.userId.username,
+      email: reg.userId.email,
+      appliedAt: reg.appliedAt,
+      status: reg.status
+    }));
+
+    res.status(200).json({
+      success: true,
+      registrations: registrationData
+    });
+  } catch (error) {
+    console.error('Error fetching event registrations:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch event registrations'
+    });
+  }
+});
+
+// Get single event details
+router.get('/:eventId', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        error: 'Event not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      event
+    });
+  } catch (error) {
+    console.error('Error fetching event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch event'
+    });
+  }
+});
+
+// Update event (admin only)
+router.put('/:eventId', verifyJWT, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const updateData = req.body;
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({
+        success: false,
+        error: 'Event not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Event updated successfully',
+      event: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error updating event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update event'
+    });
+  }
+});
+
+// Delete event (admin only)
+router.delete('/:eventId', verifyJWT, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    // Delete all applications for this event first
+    await EventApplication.deleteMany({ eventId });
+
+    // Delete the event
+    const deletedEvent = await Event.findByIdAndDelete(eventId);
+
+    if (!deletedEvent) {
+      return res.status(404).json({
+        success: false,
+        error: 'Event not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Event deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete event'
+    });
+  }
+});
+
+export default router;
