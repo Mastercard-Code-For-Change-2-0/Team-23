@@ -1,0 +1,76 @@
+/* Light theme with pink accents for Katalyst NGO landing page */
+.landing-container {
+  min-height: 100vh;
+  background: #fff;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.landing-header {
+  margin-top: 48px;
+  text-align: center;
+}
+.landing-logo {
+  width: 80px;
+  margin-bottom: 16px;
+}
+.landing-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.landing-tagline {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 32px;
+}
+.landing-main {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.landing-actions {
+  display: flex;
+  gap: 24px;
+}
+.landing-btn {
+  padding: 14px 32px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #ff69b4;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 105, 180, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+}
+.landing-btn:hover {
+  background: #ff1493;
+  box-shadow: 0 4px 16px rgba(255, 20, 147, 0.12);
+}
+.admin-btn {
+  background: #ff69b4;
+}
+.student-btn {
+  background: #fff;
+  color: #ff69b4;
+  border: 2px solid #ff69b4;
+}
+.student-btn:hover {
+  background: #ffe4f0;
+}
+@media (max-width: 600px) {
+  .landing-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .landing-header h1 {
+    font-size: 1.3rem;
+  }
+}
