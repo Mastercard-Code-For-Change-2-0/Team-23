@@ -21,7 +21,7 @@ export default function LandingPage() {
       </section>
           <main className="landing-main">
         <div className="landing-actions">
-          <a href="#admin-login" className="landing-btn admin-btn">Admin Login</a>
+          <Link to="/admin" className="landing-btn admin-btn">Admin Login</Link>
           <Link to="/register" className="landing-btn student-btn">Student Registration</Link>
         </div>
       </main>

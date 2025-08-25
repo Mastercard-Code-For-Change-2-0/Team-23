@@ -9,6 +9,10 @@
   justify-content: flex-start;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
+/* prevent content hiding under fixed navbar */
+.landing-container {
+  padding-top: 72px;
+}
 .landing-header {
   margin-top: 48px;
   text-align: center;
@@ -19,7 +23,7 @@
 }
 .hero-title {
   font-size: 2rem;
-  color: #ff8ec3; /* lighter pink */
+  color: #CE006D; /* brand pink */
   font-weight: 700;
   margin-bottom: 8px;
 }
@@ -54,7 +58,7 @@
 }
 .testimonials-title {
   font-size: 1.3rem;
-  color: #ff8ec3; /* lighter pink */
+  color: #CE006D; /* brand pink */
   font-weight: 600;
   margin-bottom: 16px;
 }
@@ -78,14 +82,14 @@
   display: block;
   margin-top: 10px;
   font-size: 0.95rem;
-  color: #ff8ec3; /* lighter pink */
+  color: #CE006D; /* brand pink */
   font-weight: 500;
 }
 .landing-footer {
   margin-top: 48px;
   padding: 24px 0 12px 0;
   text-align: center;
-  color: #ff8ec3; /* lighter pink */
+  color: #CE006D; /* brand pink */
   font-size: 1rem;
   font-weight: 500;
 }
@@ -100,23 +104,23 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  background: #ff8ec3; /* lighter pink */
+  background: #CE006D; /* brand pink */
   color: #fff;
   box-shadow: 0 2px 8px rgba(255, 142, 195, 0.08); /* adjusted shadow */
   transition: background 0.2s, box-shadow 0.2s;
   text-decoration: none;
 }
 .landing-btn:hover {
-  background: #ff78bd; /* softer hover */
+  background: #b8005d; /* darker hover from brand */
   box-shadow: 0 4px 16px rgba(255, 120, 189, 0.12); /* adjusted shadow */
 }
 .admin-btn {
-  background: #ff8ec3; /* lighter pink */
+  background: #CE006D; /* brand pink */
 }
 .student-btn {
   background: #fff;
-  color: #ff8ec3; /* lighter pink */
-  border: 2px solid #ff8ec3; /* lighter pink */
+  color: #CE006D; /* brand pink */
+  border: 2px solid #CE006D; /* brand pink */
 }
 .student-btn:hover {
   background: #ffe4f0;
