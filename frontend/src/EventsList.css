@@ -1,0 +1,69 @@
+ .events-list-container {
+  margin: 40px auto 0 auto;
+  max-width: 900px;
+  padding: 0 16px;
+  text-align: center;
+}
+.events-title {
+  color: #ff8ec3; /* lighter pink */
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+.events-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+}
+.event-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(255, 142, 195, 0.10); /* adjusted shadow */
+  padding: 28px 24px;
+  min-width: 260px;
+  max-width: 320px;
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: box-shadow 0.2s;
+}
+.event-card:hover {
+  box-shadow: 0 6px 24px rgba(255, 120, 189, 0.18); /* adjusted hover shadow */
+}
+.event-card h3 {
+  color: #a00056; /* slightly softer heading */
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+.event-date {
+  color: #ff8ec3; /* lighter pink */
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+.event-desc {
+  color: #444;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+.event-location {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+.event-register-btn {
+  background: #ff8ec3; /* lighter pink */
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background 0.2s;
+}
+.event-register-btn:hover {
+  background: #ff78bd; /* softer hover */
+}

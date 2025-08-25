@@ -1,4 +1,4 @@
-/* Light theme with pink accents for Katalyst NGO landing page */
+
 .landing-container {
   min-height: 100vh;
   background: #fff;
@@ -12,6 +12,21 @@
 .landing-header {
   margin-top: 48px;
   text-align: center;
+}
+.hero-section {
+  margin: 32px 0 0 0;
+  text-align: center;
+}
+.hero-title {
+  font-size: 2rem;
+  color: #ff8ec3; /* lighter pink */
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.hero-desc {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 0;
 }
 .landing-logo {
   width: 80px;
@@ -33,6 +48,47 @@
   flex-direction: column;
   align-items: center;
 }
+.testimonials-section {
+  margin: 48px 0 0 0;
+  text-align: center;
+}
+.testimonials-title {
+  font-size: 1.3rem;
+  color: #ff8ec3; /* lighter pink */
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.testimonials-list {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.testimonial {
+  background: #ffe4f0;
+  border-radius: 16px;
+  padding: 20px 28px;
+  color: #b3005e;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(255, 142, 195, 0.08); /* adjusted shadow */
+  max-width: 320px;
+  margin-bottom: 16px;
+}
+.testimonial span {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #ff8ec3; /* lighter pink */
+  font-weight: 500;
+}
+.landing-footer {
+  margin-top: 48px;
+  padding: 24px 0 12px 0;
+  text-align: center;
+  color: #ff8ec3; /* lighter pink */
+  font-size: 1rem;
+  font-weight: 500;
+}
 .landing-actions {
   display: flex;
   gap: 24px;
@@ -44,23 +100,23 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  background: #ff69b4;
+  background: #ff8ec3; /* lighter pink */
   color: #fff;
-  box-shadow: 0 2px 8px rgba(255, 105, 180, 0.08);
+  box-shadow: 0 2px 8px rgba(255, 142, 195, 0.08); /* adjusted shadow */
   transition: background 0.2s, box-shadow 0.2s;
   text-decoration: none;
 }
 .landing-btn:hover {
-  background: #ff1493;
-  box-shadow: 0 4px 16px rgba(255, 20, 147, 0.12);
+  background: #ff78bd; /* softer hover */
+  box-shadow: 0 4px 16px rgba(255, 120, 189, 0.12); /* adjusted shadow */
 }
 .admin-btn {
-  background: #ff69b4;
+  background: #ff8ec3; /* lighter pink */
 }
 .student-btn {
   background: #fff;
-  color: #ff69b4;
-  border: 2px solid #ff69b4;
+  color: #ff8ec3; /* lighter pink */
+  border: 2px solid #ff8ec3; /* lighter pink */
 }
 .student-btn:hover {
   background: #ffe4f0;
