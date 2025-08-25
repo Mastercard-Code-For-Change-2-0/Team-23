@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import ThankYouCard from './ThankYouCard';
+
 // Registration Form Modal Component
 const RegistrationModal = ({ isOpen, onClose, event, onSubmit, loading }) => {
   const [formData, setFormData] = useState({
@@ -293,7 +295,7 @@ const EventCard = ({ event, onApply, appliedEvents }) => {
             </div>
           )}
         </div>
-        
+<div className="flex justify-center gap-3">
         <button
           onClick={() => onApply(event)}
           disabled={isApplied}
@@ -303,8 +305,20 @@ const EventCard = ({ event, onApply, appliedEvents }) => {
               : 'bg-pink-500 text-white hover:bg-pink-600'
           }`}
         >
-          {isApplied ? 'Applied' : 'Apply for Event'}
+         Interested
         </button>
+        <button
+          onClick={() => onApply(event)}
+          disabled={isApplied}
+          className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+            isApplied 
+              ? 'bg-green-100 text-green-700 cursor-not-allowed' 
+              : 'bg-pink-500 text-white hover:bg-pink-600'
+          }`}
+        >
+          Apply For Event
+        </button>
+        </div>
       </div>
     </div>
   );
@@ -321,10 +335,15 @@ const UserDashboard = () => {
     event: null,
     loading: false
   });
+  const [thankYouCard, setThankYouCard] = useState({
+    isOpen: false,
+    applicantData: null,
+    eventData: null
+  });
 
   useEffect(() => {
     fetchEvents();
-    fetchAppliedEvents();
+    // fetchAppliedEvents();
   }, []);
 
   const fetchEvents = async () => {
@@ -339,14 +358,14 @@ const UserDashboard = () => {
     }
   };
 
-  const fetchAppliedEvents = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/api/v1/events/applied');
-      setAppliedEvents(response.data.appliedEvents || []);
-    } catch (error) {
-      console.error('Failed to fetch applied events:', error);
-    }
-  };
+  // const fetchAppliedEvents = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:3000/api/v1/events/applied');
+  //     setAppliedEvents(response.data.appliedEvents || []);
+  //   } catch (error) {
+  //     console.error('Failed to fetch applied events:', error);
+  //   }
+  // };
 
   const handleApply = (event) => {
     setRegistrationModal({
@@ -366,8 +385,16 @@ const UserDashboard = () => {
       });
       
       setAppliedEvents([...appliedEvents, registrationModal.event._id]);
+      
+      // Show thank you card instead of alert
+      setThankYouCard({
+        isOpen: true,
+        applicantData: registrationData,
+        eventData: registrationModal.event
+      });
+      
+      // Close registration modal
       setRegistrationModal({ isOpen: false, event: null, loading: false });
-      alert('Successfully applied for the event!');
     } catch (error) {
       console.error('Failed to apply for event:', error);
       alert(error.response?.data?.error || 'Failed to apply for event. Please try again.');
@@ -377,6 +404,14 @@ const UserDashboard = () => {
 
   const closeRegistrationModal = () => {
     setRegistrationModal({ isOpen: false, event: null, loading: false });
+  };
+
+  const closeThankYouCard = () => {
+    setThankYouCard({
+      isOpen: false,
+      applicantData: null,
+      eventData: null
+    });
   };
 
   const handleLogout = async () => {
@@ -465,6 +500,14 @@ const UserDashboard = () => {
         onClose={closeRegistrationModal}
         onSubmit={handleRegistrationSubmit}
         loading={registrationModal.loading}
+      />
+
+      {/* Thank You Card */}
+      <ThankYouCard
+        isOpen={thankYouCard.isOpen}
+        applicantData={thankYouCard.applicantData}
+        eventData={thankYouCard.eventData}
+        onClose={closeThankYouCard}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import Papa from 'papaparse';
 
 const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
   const [formData, setFormData] = useState({
@@ -165,6 +166,44 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
 const EventDetailsModal = ({ isOpen, onClose, event, registeredStudents }) => {
   if (!isOpen || !event) return null;
 
+  const downloadCSV = () => {
+    if (registeredStudents.length === 0) {
+      alert('No students registered for this event to download.');
+      return;
+    }
+
+    // Prepare data for CSV
+    const csvData = registeredStudents.map((student, index) => ({
+      'S.No': index + 1,
+      'Student Name': student.studentName || 'N/A',
+      'Phone Number': student.phoneNumber || 'N/A',
+      'College': student.college || 'N/A',
+      'Year of Study': student.yearOfStudy || 'N/A',
+      'Field of Study': student.fieldOfStudy || 'N/A',
+      'Application Status': student.status || 'Applied',
+      'Applied Date': new Date(student.appliedAt).toLocaleDateString(),
+      'Applied Time': new Date(student.appliedAt).toLocaleTimeString(),
+      'Event Title': event.Title,
+      'Event ID': event.EventID || event._id,
+      'Event Location': event.Location,
+      'Event Start Date': new Date(event.StartDate).toLocaleDateString(),
+    }));
+
+    // Generate CSV
+    const csv = Papa.unparse(csvData);
+    
+    // Create download link
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${event.Title.replace(/[^a-z0-9]/gi, '_')}_registered_students.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
@@ -194,7 +233,20 @@ const EventDetailsModal = ({ isOpen, onClose, event, registeredStudents }) => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-700">Registered Students ({registeredStudents.length})</h4>
+            <div className="flex justify-between items-center">
+              <h4 className="font-semibold text-gray-700">Registered Students ({registeredStudents.length})</h4>
+              {registeredStudents.length > 0 && (
+                <button
+                  onClick={downloadCSV}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center space-x-2"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Download CSV</span>
+                </button>
+              )}
+            </div>
             {registeredStudents.length === 0 ? (
               <p className="text-gray-500 mt-2">No students have registered for this event yet.</p>
             ) : (
@@ -263,6 +315,70 @@ const AdminDashboard = () => {
     window.location.href = '/';
   };
 
+  const downloadAllStudentsCSV = async () => {
+    try {
+      setLoading(true);
+      let allStudentsData = [];
+      
+      // Fetch registrations for all events
+      for (const event of events) {
+        try {
+          const response = await axios.get(`/events/${event._id}/registrations`);
+          const eventRegistrations = response.data.registrations || [];
+          
+          // Add event information to each student record
+          const studentsWithEventInfo = eventRegistrations.map((student, index) => ({
+            'S.No': allStudentsData.length + index + 1,
+            'Student Name': student.studentName || 'N/A',
+            'Phone Number': student.phoneNumber || 'N/A',
+            'College': student.college || 'N/A',
+            'Year of Study': student.yearOfStudy || 'N/A',
+            'Field of Study': student.fieldOfStudy || 'N/A',
+            'Application Status': student.status || 'Applied',
+            'Applied Date': new Date(student.appliedAt).toLocaleDateString(),
+            'Applied Time': new Date(student.appliedAt).toLocaleTimeString(),
+            'Event Title': event.Title,
+            'Event ID': event.EventID || event._id,
+            'Event Location': event.Location,
+            'Event Start Date': new Date(event.StartDate).toLocaleDateString(),
+            'Event End Date': new Date(event.EndDate).toLocaleDateString(),
+          }));
+          
+          allStudentsData = [...allStudentsData, ...studentsWithEventInfo];
+        } catch (eventError) {
+          console.error(`Failed to fetch registrations for event ${event.Title}:`, eventError);
+        }
+      }
+      
+      if (allStudentsData.length === 0) {
+        alert('No student registrations found across all events.');
+        return;
+      }
+      
+      // Generate CSV
+      const csv = Papa.unparse(allStudentsData);
+      
+      // Create download link
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `All_Events_Registered_Students_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert(`Successfully downloaded CSV with ${allStudentsData.length} student registrations!`);
+      
+    } catch (error) {
+      console.error('Failed to download all students CSV:', error);
+      alert('Failed to download CSV. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -303,15 +419,26 @@ const AdminDashboard = () => {
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Event Management</h2>
             <p className="text-gray-600">Manage events and view registrations</p>
           </div>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition-colors flex items-center"
-          >
-            <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Create New Event
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={downloadAllStudentsCSV}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            >
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Download All CSV
+            </button>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition-colors flex items-center"
+            >
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Create New Event
+            </button>
+          </div>
         </div>
 
         {error && (
