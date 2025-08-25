@@ -201,8 +201,8 @@ const EventDetailsModal = ({ isOpen, onClose, event, registeredStudents }) => {
               <div className="mt-2 space-y-2">
                 {registeredStudents.map((student, index) => (
                   <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    <p><strong>Name:</strong> {student.username}</p>
-                    <p><strong>Email:</strong> {student.email}</p>
+                    <p><strong>Name:</strong> {student.studentName}</p>
+                    {/* <p><strong>Email:</strong> {student.email}</p> */}
                     <p><strong>Applied:</strong> {new Date(student.appliedAt).toLocaleString()}</p>
                   </div>
                 ))}
@@ -245,6 +245,7 @@ const AdminDashboard = () => {
     try {
       const response = await axios.get(`/events/${eventId}/registrations`);
       setRegisteredStudents(response.data.registrations || []);
+      console.log(response.data.registrations)
     } catch (error) {
       console.error('Failed to fetch event details:', error);
       setRegisteredStudents([]);

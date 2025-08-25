@@ -179,12 +179,12 @@ router.get('/:eventId/registrations', verifyJWT, async (req, res) => {
     const { eventId } = req.params;
 
     const registrations = await EventApplication.find({ eventId })
-      .populate('userId', 'username email')
+      .populate('studentName')
       .sort({ appliedAt: -1 });
 
     const registrationData = registrations.map(reg => ({
-      username: reg.userId.username,
-      email: reg.userId.email,
+     
+      // email: reg.userId.email,
       studentName: reg.studentName,
       phoneNumber: reg.phoneNumber,
       college: reg.college,
