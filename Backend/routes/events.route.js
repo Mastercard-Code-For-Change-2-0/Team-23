@@ -63,10 +63,42 @@ router.post('/create', verifyJWT, async (req, res) => {
 });
 
 // Apply for an event (authenticated users)
-router.post('/apply',async (req, res) => {
+router.post('/apply', async (req, res) => {
   try {
-    const { eventId } = req.body;
-    const userId = req.user._id;
+    const { 
+      eventId, 
+      studentName, 
+      phoneNumber, 
+      college, 
+      yearOfStudy, 
+      fieldOfStudy, 
+      otherFieldOfStudy 
+    } = req.body;
+    // const userId = req.user._id;
+
+    // Validate required fields
+    if (!eventId || !studentName || !phoneNumber || !college || !yearOfStudy || !fieldOfStudy) {
+      return res.status(400).json({
+        success: false,
+        error: 'All registration fields are required'
+      });
+    }
+
+    // Validate phone number format
+    if (!/^[0-9]{10}$/.test(phoneNumber)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please enter a valid 10-digit phone number'
+      });
+    }
+
+    // Validate fieldOfStudy and otherFieldOfStudy
+    if (fieldOfStudy === 'Other' && !otherFieldOfStudy) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please specify your field of study when selecting "Other"'
+      });
+    }
 
     // Check if event exists
     const event = await Event.findById(eventId);
@@ -78,22 +110,28 @@ router.post('/apply',async (req, res) => {
     }
 
     // Check if user has already applied
-    const existingApplication = await EventApplication.findOne({
-      userId,
-      eventId
-    });
+    // const existingApplication = await EventApplication.findOne({
+    //   userId,
+    //   eventId
+    // });
 
-    if (existingApplication) {
-      return res.status(400).json({
-        success: false,
-        error: 'You have already applied for this event'
-      });
-    }
+    // if (existingApplication) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: 'You have already applied for this event'
+    //   });
+    // }
 
-    // Create new application
+    // Create new application with registration data
     const application = new EventApplication({
-      userId,
-      eventId
+      // userId,
+      eventId,
+      studentName,
+      phoneNumber,
+      college,
+      yearOfStudy,
+      fieldOfStudy,
+      otherFieldOfStudy: fieldOfStudy === 'Other' ? otherFieldOfStudy : undefined
     });
 
     await application.save();
@@ -112,7 +150,7 @@ router.post('/apply',async (req, res) => {
 });
 
 // Get user's applied events
-router.get('/applied', async (req, res) => {
+router.get('/applied', verifyJWT, async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -136,7 +174,7 @@ router.get('/applied', async (req, res) => {
 });
 
 // Get event registrations (admin only)
-router.get('/:eventId/registrations', async (req, res) => {
+router.get('/:eventId/registrations', verifyJWT, async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -147,6 +185,12 @@ router.get('/:eventId/registrations', async (req, res) => {
     const registrationData = registrations.map(reg => ({
       username: reg.userId.username,
       email: reg.userId.email,
+      studentName: reg.studentName,
+      phoneNumber: reg.phoneNumber,
+      college: reg.college,
+      yearOfStudy: reg.yearOfStudy,
+      fieldOfStudy: reg.fieldOfStudy,
+      otherFieldOfStudy: reg.otherFieldOfStudy,
       appliedAt: reg.appliedAt,
       status: reg.status
     }));
@@ -191,7 +235,7 @@ router.get('/:eventId', async (req, res) => {
 });
 
 // Update event (admin only)
-router.put('/:eventId',  async (req, res) => {
+router.put('/:eventId', verifyJWT, async (req, res) => {
   try {
     const { eventId } = req.params;
     const updateData = req.body;
