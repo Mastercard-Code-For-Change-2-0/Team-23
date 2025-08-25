@@ -77,7 +77,7 @@ const Login = () => {
         {/* Login Type Indicator */}
         <div className={`mb-6 p-3 rounded-lg ${isAdminLogin ? 'bg-purple-50 border border-purple-200' : 'bg-pink-50 border border-pink-200'}`}>
           <p className={`text-sm font-medium ${isAdminLogin ? 'text-purple-700' : 'text-pink-700'}`}>
-            {isAdminLogin ? '🔒 Administrator Login' : '👨‍🎓 Student Login'}
+            {isAdminLogin ? 'Administrator Login' : 'Student Login'}
           </p>
           {isAdminLogin && (
             <p className="text-xs text-purple-600 mt-1">

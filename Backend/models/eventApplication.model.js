@@ -11,6 +11,40 @@ const eventApplicationSchema = new mongoose.Schema({
     ref: 'Event', 
     required: true 
   },
+  // Student Registration Information
+  studentName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    trim: true,
+    match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number']
+  },
+  college: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  yearOfStudy: {
+    type: String,
+    required: true,
+    enum: ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Graduate', 'Post Graduate']
+  },
+  fieldOfStudy: {
+    type: String,
+    required: true,
+    enum: ['Computer Engineering', 'IT', 'EnTC', 'Other']
+  },
+  otherFieldOfStudy: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.fieldOfStudy === 'Other';
+    }
+  },
   appliedAt: { 
     type: Date, 
     default: Date.now 

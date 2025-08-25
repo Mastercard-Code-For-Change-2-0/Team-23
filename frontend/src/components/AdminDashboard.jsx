@@ -25,7 +25,7 @@ const CreateEventModal = ({ isOpen, onClose, onEventCreated }) => {
     setLoading(true);
     
     try {
-      await axios.post('/events/create', {
+      await axios.post('http://localhost:3000/api/v1/events/create', {
         ...formData,
         EventID: parseInt(formData.EventID),
         AdminID: 1 // You can modify this based on admin ID
@@ -198,12 +198,37 @@ const EventDetailsModal = ({ isOpen, onClose, event, registeredStudents }) => {
             {registeredStudents.length === 0 ? (
               <p className="text-gray-500 mt-2">No students have registered for this event yet.</p>
             ) : (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 space-y-3">
                 {registeredStudents.map((student, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    <p><strong>Name:</strong> {student.username}</p>
-                    <p><strong>Email:</strong> {student.email}</p>
-                    <p><strong>Applied:</strong> {new Date(student.appliedAt).toLocaleString()}</p>
+                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <p><strong>Name:</strong> {student.studentName || student.username}</p>
+                        <p><strong>Email:</strong> {student.email}</p>
+                        <p><strong>Phone:</strong> {student.phoneNumber || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <p><strong>College:</strong> {student.college || 'Not provided'}</p>
+                        <p><strong>Year:</strong> {student.yearOfStudy || 'Not provided'}</p>
+                        <p><strong>Field:</strong> {
+                          student.fieldOfStudy === 'Other' && student.otherFieldOfStudy
+                            ? `${student.fieldOfStudy} (${student.otherFieldOfStudy})`
+                            : student.fieldOfStudy || 'Not provided'
+                        }</p>
+                      </div>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-200">
+                      <p className="text-sm text-gray-500">
+                        <strong>Applied:</strong> {new Date(student.appliedAt).toLocaleString()}
+                      </p>
+                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${
+                        student.status === 'applied' ? 'bg-blue-100 text-blue-800' :
+                        student.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -231,7 +256,7 @@ const AdminDashboard = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get('/events');
+      const response = await axios.get('http://localhost:3000/api/v1/events');
       setEvents(response.data.events || []);
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -243,7 +268,7 @@ const AdminDashboard = () => {
 
   const fetchEventDetails = async (eventId) => {
     try {
-      const response = await axios.get(`/events/${eventId}/registrations`);
+      const response = await axios.get(`http://localhost:3000/api/v1/events/${eventId}/registrations`);
       setRegisteredStudents(response.data.registrations || []);
     } catch (error) {
       console.error('Failed to fetch event details:', error);
