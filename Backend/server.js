@@ -11,8 +11,7 @@ const app = express();
 
 import connectDB from './db/index.js';
 
-//Mongo connection
-connectDB();
+
 
 //middlewares
 app.use(cors({
@@ -44,6 +43,11 @@ app.use((err, req, res, next) => {
 });
 
 //server start
-app.listen(3000, () => {
+connectDB().then(() =>{
+    app.listen(3000, () => {
     console.log("Server is running on port 3000");
-});
+    });
+})
+
+
+
