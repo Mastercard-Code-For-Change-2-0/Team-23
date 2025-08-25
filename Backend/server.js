@@ -31,9 +31,10 @@ app.use(passport.initialize());
 
 //Routes
 import authRouter from './routes/auth.route.js';
-
+import AdminEventRoutes from './routes/AdminEvent.route.js';
 
 app.use('/api/v1/auth', authRouter);
+app.use("/api/v1/Adminevents", AdminEventRoutes);
 
 
 //error handling route

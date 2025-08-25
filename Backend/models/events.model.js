@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema({
-  EventID: { type: Number, required: true, unique: true },
   AdminID: { type: Number, required: true }, //admin object id
   Title: { type: String, required: true },
   Description: { type: String },
@@ -11,6 +10,6 @@ const eventSchema = new mongoose.Schema({
   CreatedAt: { type: Date, default: Date.now }
 });
 
-const Event = mongoose.model('Event', eventSchema);
+const User_Event = mongoose.model('Event', eventSchema);
 
-export default Event
+export default User_Event
